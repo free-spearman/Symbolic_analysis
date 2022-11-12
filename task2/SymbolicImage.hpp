@@ -17,8 +17,8 @@ using namespace std;
 #define B  2.0
 #define C -2.0
 #define D  2.0
-#define NUMCELLS 5
-#define DISPLAYFUNC testFunc
+#define NUMCELLS 50
+#define DISPLAYFUNC loc_julia_func
 #define RRAND 1000
 #define NPOINTS 100
 
@@ -29,6 +29,7 @@ using coords_t  = pair<double, double>;
 using dfunction_t = coords_t (*)(const coords_t&);
 
 /* тестовая функция */
+/*
 pair<double, double> DISPLAYFUNC (const coords_t& coords ) {
 	int** m = new int * [2];
 	m[0] = new int[2];
@@ -45,6 +46,19 @@ pair<double, double> DISPLAYFUNC (const coords_t& coords ) {
     delete(m);
 	return make_pair(x1, y1);
 }
+*/
+//потом убрать !!!!
+
+coords_t DISPLAYFUNC(const coords_t& coords) {
+	double a = 0.15;
+	double b = 0.45;
+	double x = coords.first;
+	double y = coords.second;
+	double x1 = x * x - y * y + a;
+    double y1 = 2 * x * y + b;
+	return make_pair(x1, y1);
+}
+
 
 /*схема работы CalcSymbolicImage -> displayСell -> displayPoint*/
 class SymbolicImage{
@@ -96,6 +110,24 @@ public:
 		displayFunc = DISPLAYFUNC;
 		range_rand = RRAND;
 	}
+
+	SymbolicImage( set<string> axes,
+		 options_t boundaries,
+		 named_map_t num_cells,
+		 size_t num_points,
+		 dfunction_t displayFunc,
+		 double range_rand
+	){
+		this->axes = axes;
+		this->boundaries = boundaries;
+		this->num_cells = num_cells;
+		this->num_points = num_points;	
+		this->displayFunc = displayFunc;
+		this->range_rand = range_rand; 	
+		calcSegmentLength();
+		calcCellSize();
+		calcNumCells();
+		}
 	//Отображает точки ячейки
 	virtual size_t displayPoint(const double l_board, const double t_board);
 	//Отображает ячейку
