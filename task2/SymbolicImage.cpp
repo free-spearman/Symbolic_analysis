@@ -97,3 +97,28 @@ graph_t& SymbolicImage::CalcSymbolicImage(){
     	image_graph.insert({i, displayCell(i)} );
     return image_graph;
 }
+
+coords_t SymbolicImage::CellToPoint(size_t cell){
+	//num_cells["x"] * (size_t)tgt_nrow + (size_t)tgt_ncol + 1
+	//cout<<"cell:"<<cell<<endl;
+	double nrow = roundUp( cell / (double)num_cells["x"]) - 1;
+	//cout<<"nrow:"<<nrow<<endl;
+    double ncol = cell - nrow* num_cells["x"];
+    //cout<<"num_cells[x]"<<num_cells["x"]<<endl;
+    //cout<<"ncol:"<<ncol<<endl<<endl;
+	double x = (ncol-1)*cell_size["x"] + boundaries["x"]["begin"];
+	double y = boundaries["y"]["end"] - nrow*cell_size["y"];
+	return make_pair(x,y);
+}
+
+/*
+(tgt_y + )  =  
+(num_cells["y"] - double tgt_nrow)*cell_size["y"] - segment_lengths["y"]/2 ;
+	double tgt_ncol = ((tgt_x + segment_lengths["x"]/2) / cell_size["x"]);
+long long row = roundUp((double)comp / (double)c_x);
+long long column = comp - (row - 1) * c_x;
+out<<"row:"<<row<<" column"<<column<<endl;
+double x_tl = d_x * (column - 1) + u_l;
+double y_tl = (c_y - row + 1) * d_y + h_b;
+
+*/

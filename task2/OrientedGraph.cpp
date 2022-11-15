@@ -1,5 +1,5 @@
 #include "OrientedGraph.hpp"
-
+#define COMPSIZE 1
 //поиск компоненты  
 void OrientedGraph::findComponent(size_t vertex) {
     static size_t time = 0;
@@ -26,13 +26,13 @@ void OrientedGraph::findComponent(size_t vertex) {
             // using csc_t = vector<vector<size_t>>;
             poppedItem = stk.top();
             component.push_back(poppedItem);
-            cout << poppedItem << " ";
+            //cout << poppedItem << " ";
             stkItem[poppedItem] = false;
             stk.pop();
         }
         poppedItem = stk.top();
         component.push_back(poppedItem);
-        cout << poppedItem << endl;
+        //cout << poppedItem << endl;
         csc.push_back(component);
         stkItem[poppedItem] = false;
         stk.pop();
@@ -58,4 +58,26 @@ void OrientedGraph::printStrongConComponents(){
             cout << v <<" ";
         cout<<endl;
     }
+};
+size_t OrientedGraph::findMaxRangComponent(){
+    if (csc.empty())
+        return 0;
+    size_t max_rang = 0;
+    size_t temp = 0;
+    for (vector<size_t> component: csc){
+        temp = component.size();
+        max_rang = max(max_rang,temp); 
+    }
+    return max_rang;
+} 
+csc_t OrientedGraph::filterComponents(){
+    //using csc_t = vector<vector<size_t>>;
+    if (!filtered_csc.empty())
+        filtered_csc.clear();
+    //size_t max_size_comp = findMaxRangComponent();
+    for (vector<size_t> component: csc){
+        if (component.size() > COMPSIZE)
+            filtered_csc.push_back(component);         
+    }
+    return filtered_csc;
 };

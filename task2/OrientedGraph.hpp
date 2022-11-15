@@ -21,6 +21,7 @@ class OrientedGraph{
 	size_t numVertices;
 	//adjacency List или список смежных вершин 
 	graph_t adjList;
+	csc_t filtered_csc;
 	// комоненты сильной связности/Components of strong communication
 	csc_t csc;
 	// список посещений 
@@ -33,6 +34,9 @@ class OrientedGraph{
 	vector<bool> stkItem;
 	size_t min(size_t a, size_t b) {
 		return (a < b) ? a : b;
+	}
+	size_t max(size_t a, size_t b){
+		return (a > b) ? a : b;	
 	}
 	void findComponent(size_t vertex);
 public:
@@ -47,7 +51,9 @@ public:
 		lowLink.assign(numVertices+1, NOVISITED);
 		stkItem.assign(numVertices+1, DEFAULT_STKITEM);
 	}
-	void printStrongConComponents();	
+	void printStrongConComponents();
+	csc_t filterComponents();
+	size_t findMaxRangComponent();
 };
 
 #endif /* OrientedGraph_hpp */

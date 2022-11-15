@@ -22,6 +22,11 @@ using namespace std;
 #define RRAND 1000
 #define NPOINTS 100
 
+#define SEP_AXIS ';'
+#define SEP_VAL ','
+#define SEP_EQ ':'
+
+
 using graph_t = map<size_t, set<size_t> >;
 using named_map_t = map<string, double>;
 using options_t = map<string, named_map_t>;
@@ -110,7 +115,44 @@ public:
 		displayFunc = DISPLAYFUNC;
 		range_rand = RRAND;
 	}
-
+	named_map_t getCellSize(){
+		return cell_size;
+	}
+	string getStrCellSize(){
+		string res;
+		for(string axis : axes){
+			res.append(axis);
+			res.push_back(SEP_EQ);
+			res.append(to_string(cell_size[axis]));
+			res.push_back(SEP_AXIS);
+		}
+		return res;
+	}
+	options_t getBoundaries(){
+		return boundaries;
+	}
+	string getStrBoundaries(){
+		string res;
+		for(string axis : axes){
+			res.append(axis);
+			res.push_back(SEP_EQ);
+			res.append(to_string(boundaries[axis]["begin"]));
+			res.push_back(SEP_VAL);
+			res.append(to_string(boundaries[axis]["end"]));
+			res.push_back(SEP_AXIS);
+		}
+		return res;
+	}
+	string getParamName(){
+		string name = string("SymIm");
+		for(string axis : axes){
+			name.push_back('_');
+			name.append(to_string(cell_size[axis]));
+		}
+		name.push_back('_');
+		name.append(to_string(num_points));
+		return name;
+	}
 	SymbolicImage( set<string> axes,
 		 options_t boundaries,
 		 named_map_t num_cells,
@@ -128,6 +170,7 @@ public:
 		calcCellSize();
 		calcNumCells();
 		}
+	virtual coords_t CellToPoint(size_t cell);
 	//Отображает точки ячейки
 	virtual size_t displayPoint(const double l_board, const double t_board);
 	//Отображает ячейку
