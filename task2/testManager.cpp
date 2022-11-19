@@ -61,7 +61,7 @@ int main(int argc, char const *argv[])
 	//cout<<"def num_points"<<endl;
 	size_t num_points = argc > NPOINTS_P ? stoi(argv[NPOINTS_P]) : NPOINTS;
 	//cout<<num_points<<endl;
-	DuffingFunctions F = DuffingFunction();
+	DuffingFunction F = DuffingFunction();
 	
 	DisplayFunction* displayFunc = (DisplayFunction *) &F;
 	//displayFunc(make_pair(1,1));
@@ -75,7 +75,8 @@ int main(int argc, char const *argv[])
 		range_rand
 		);
 	//cout<<"Создал test"<<endl;
-	graph_t graph = test.CalcSymbolicImage();
+	//graph_t graph = test.CalcSymbolicImage();
+	graph_t graph = test.CalcSymbolicImage_PRL(8);
 	//test.CellToPoint(1);
 	//cout<<"OrientedGraph"<<endl;
 	OrientedGraph g_test = OrientedGraph(graph);

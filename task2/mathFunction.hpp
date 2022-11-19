@@ -90,7 +90,7 @@ public:
 	{"linr_stiff", -1.0},
 	{"restoring_force", 1.0 },
 	{"amplitude", 0.3},
-	{"anglr_freq", 1.0}
+	{"anglr_freq", 2.0}
 };
 
 
@@ -118,8 +118,19 @@ public:
 		// тут наверное можно посчитать период?
 		setStepByIters(iters);
 	}
+	DuffingFunction(named_map_t& param, double step)
+	: DisplayFunction( param,
+		DEF_PARAM_NAME_DUFFING,
+		DEF_PARAM_DUFFING
+		){
+		//num_iters = iters;
+		// тут наверное можно посчитать период?
+		setItersByStep(step);
+	}
 	DuffingFunction(): 
-		DuffingFunction( DEF_PARAM_DUFFING, (size_t) NUMITERS_DUFF){}
+		DuffingFunction( DEF_PARAM_DUFFING,
+		0.00283  
+		/*(size_t) NUMITERS_DUFF*/){}
 
 	double getDefaultParam(const string& key){
 		return DEF_PARAM[key];

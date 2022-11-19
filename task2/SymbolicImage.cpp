@@ -2,6 +2,11 @@
 using namespace std;
 /*схема работы CalcSymbolicImage -> displayСell -> displayPoint*/
 
+using SymIm_Pieces_t = struct{
+	SymbolicImage* p_si;
+	pieces_graph_t piece; 
+};
+
 double SymbolicImage::randStep(string coords){
 		//h_rand = 1000 * h
 	int norm_rand = cell_size[coords] * range_rand;
@@ -97,6 +102,205 @@ graph_t& SymbolicImage::CalcSymbolicImage(){
     	image_graph.insert({i, displayCell(i)} );
     return image_graph;
 }
+//вычисление одной нитки 
+void* SymbolicImage::CalcSymbolicImage_thread(void* arg){
+	// мне будет больно ...
+	SymIm_Pieces_t* parameters = (SymIm_Pieces_t*) arg;
+	
+	SymbolicImage* p_si = parameters->p_si;
+	pieces_graph_t* piece = &parameters->piece;
+	
+	for (size_t i = piece->begin; i < piece->end; i++)
+    	piece->graph.insert({i, p_si->displayCell(i)});
+    return 0;
+}
+
+//тип параллельный вариант
+graph_t& SymbolicImage::CalcSymbolicImage_PRL(size_t nthreads){
+	// вычисляем длины сегментов
+	calcSegmentLength();
+	calcCellSize();
+	calcNumCells();
+	size_t numberCells = num_cells["total"];
+	// вычисляем количество ячеек нужно заменить ме = тод
+    if (nthreads < 1)
+    	nthreads = 1;
+    pthread_t threads[nthreads-1];
+    size_t niterations = (numberCells+1);
+    size_t size_one_piece =  (niterations) / nthreads; // 10/4 = 2 
+	size_t additive =  niterations % nthreads; //10%4 = 2
+	// 2х3 + 2x2
+	size_t active_threads = 0, distributed = 0;
+
+	/*
+	мне нужно будет слить в одну кучку кучу map(графов), 
+	так что можно передать указатель на это добро
+	
+	нужна структура begin, end, graph  
+	*/
+
+	//pieces_graph_t pieces[nthreads];
+	SymIm_Pieces_t parameters[nthreads];
+	//parameters.p_si = this;
+	
+	//запуск ниток
+
+	for (; active_threads < nthreads && additive > 0; active_threads++, additive--){
+		//заполняем arg
+
+		parameters[active_threads].piece.begin = distributed; //0 //3
+		distributed += size_one_piece + 1; // 3 ) //6
+		parameters[active_threads].piece.end = distributed;
+		//pieces[active_threads].arg = arg;
+		// вызов action
+		
+		parameters[active_threads].p_si = this;
+
+		pthread_create( &threads[active_threads], 
+			NULL, 
+			CalcSymbolicImage_thread, //нужно дописать !!! или уже нет 
+			(void*) &parameters[active_threads]
+			);
+	}
+	// additive = 0 active_threads = 2
+
+	for (; active_threads < nthreads - 1; active_threads++){
+		//заполняем arg
+		parameters[active_threads].piece.begin = distributed; //6//8 
+		distributed += size_one_piece; // 8 
+		parameters[active_threads].piece.end = distributed;
+
+		parameters[active_threads].p_si = this;		
+		// вызов action
+		pthread_create( &threads[active_threads], 
+			NULL, 
+			CalcSymbolicImage_thread, 
+			(void*) &parameters[active_threads]
+		);
+	}
+	// active_threads = 3 
+	// даем работу основной нитке
+	parameters[active_threads].piece.begin = distributed; //8 
+	distributed += size_one_piece; // 10 
+	parameters[active_threads].piece.end = distributed;
+	//вызов action
+	parameters[active_threads].p_si = this;
+	CalcSymbolicImage_thread( (void*) &parameters[active_threads]);
+	//собрать потоки, граф и выйти
+	//foo.insert(bar.begin(),bar.end());
+	image_graph.insert(parameters[nthreads - 1].piece.graph.begin(),
+		parameters[nthreads - 1].piece.graph.end()
+	);
+	for (size_t i = 0; i < nthreads - 1 ; i++){
+		pthread_join( threads[i], NULL);
+		image_graph.insert(parameters[i].piece.graph.begin(),
+			parameters[i].piece.graph.end()
+		);
+	}
+
+	return image_graph;
+}
+
+/*
+int auto_parallelization ( void *arg,
+	//const type_info arg_type,
+	size_t nthreads, 
+	size_t niterations 
+	){
+	if (niterations < nthreads ) 
+		nthreads = niterations;
+	
+	arg_thread arg_list[nthreads];
+	pthread_t threads[nthreads-1];   
+
+	size_t size_one_piece =  niterations / nthreads; // 10/4 = 2 
+	size_t additive =  niterations % nthreads; //10%4 = 2
+	// 2х3 + 2x2
+	size_t active_threads = 0, distributed = 0;
+	//запуск ниток
+	for (; active_threads < nthreads && additive > 0; active_threads++, additive--){
+		//заполняем arg
+		arg_list[active_threads].begin = distributed; //0 //3
+		distributed += size_one_piece + 1; // 3 ) //6
+		arg_list[active_threads].end = distributed;
+		arg_list[active_threads].arg = arg;
+		// вызов action
+		pthread_create( &threads[active_threads], 
+			NULL, 
+			action, 
+			(void*) &arg_list[active_threads]);
+	}
+	// additive = 0 active_threads = 2
+	for (; active_threads < nthreads - 1; active_threads++){
+		//заполняем arg
+		arg_list[active_threads].begin = distributed; //6//8 
+		distributed += size_one_piece; // 8 
+		arg_list[active_threads].end = distributed;
+		arg_list[active_threads].arg = arg;
+		// вызов action
+		pthread_create( &threads[active_threads], 
+			NULL, 
+			action, 
+			(void*) &arg_list[active_threads]);
+	}
+	// active_threads = 3 
+	// даем работу основной нитке
+	arg_list[active_threads].begin = distributed; //8 
+	distributed += size_one_piece; // 10 
+	arg_list[active_threads].end = distributed;
+	arg_list[active_threads].arg = arg;
+	//вызов action
+	action( (void*) &arg_list[active_threads] );
+	//собрать потоки и выйти
+	for (size_t i = 0; i < nthreads - 1 ; i++){
+		pthread_join( threads[i], NULL);
+		
+	}
+	return 0;
+}
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 coords_t SymbolicImage::CellToPoint(size_t cell){
 	//num_cells["x"] * (size_t)tgt_nrow + (size_t)tgt_ncol + 1
@@ -110,6 +314,8 @@ coords_t SymbolicImage::CellToPoint(size_t cell){
 	double y = boundaries["y"]["end"] - nrow*cell_size["y"];
 	return make_pair(x,y);
 }
+
+
 
 /*
 (tgt_y + )  =  

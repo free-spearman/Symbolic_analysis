@@ -4,6 +4,8 @@
 #include <iostream>
 #include <iterator>
 #include <utility>
+#include <pthread.h>
+//-lpthread
 
 #include "custom_types.hpp"
 #include "mathFunction.hpp"
@@ -58,6 +60,7 @@ pair<double, double> DISPLAYFUNC (const coords_t& coords ) {
 
 /*схема работы CalcSymbolicImage -> displayСell -> displayPoint*/
 class SymbolicImage{
+protected:
 	named_map_t num_cells; // число ячеек на оси  
 	named_map_t cell_size; // размер ячейки  
 	options_t boundaries; // набор краевый условий области
@@ -79,7 +82,9 @@ class SymbolicImage{
 	virtual SymbolicImage& calcSegmentLength(); 
 	
 	// считает шаг по оси по разбиению 
-	virtual SymbolicImage& calcCellSize();  
+	virtual SymbolicImage& calcCellSize();
+	// выполняет работу нити
+	static void* CalcSymbolicImage_thread(void* arg);  
 public:
 	SymbolicImage(){
 		axes.insert("x");
@@ -172,7 +177,11 @@ public:
 	virtual graph_t& CalcSymbolicImage ();
 	//считает разбиение по по шагу
 	virtual named_map_t calcNumCells();
+	//параллельный вариант CalcSymbolicImage
+	virtual graph_t& CalcSymbolicImage_PRL(size_t nthreads);
 };
+
+
 #endif /* SymbolicImage_hpp */
 /*
 -2    -1.2     -0.4   0.4    1.2     2

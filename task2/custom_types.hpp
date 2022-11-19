@@ -15,6 +15,13 @@ using options_t = map<string, named_map_t>;
 using coords_t  = pair<double, double>;
 using dfunction_t = coords_t (*)(const coords_t&);
 
+using pieces_graph_t = struct{
+	size_t begin;
+	size_t end;
+	graph_t graph;
+};
+
+
 /*from mathFunction*/
 
 using xyt_t = struct
