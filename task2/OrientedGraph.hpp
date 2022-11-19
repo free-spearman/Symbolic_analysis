@@ -1,12 +1,11 @@
 #ifndef OrientedGraph_hpp
 #define OrientedGraph_hpp
+
 #include <iostream>
-#include <vector>
 #include <stack>
-#include <set>
-#include <map>
 #include <algorithm>
 
+#include "custom_types.hpp"
 #include "SymbolicImage.hpp"
 
 
@@ -14,7 +13,7 @@
 #define DEFAULT_STKITEM false
 
 using namespace std;
-using csc_t = vector<vector<size_t>>;
+
 
 class OrientedGraph{
 	//количество вершин

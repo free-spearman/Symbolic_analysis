@@ -1,13 +1,13 @@
 #include "Manager.cpp"
 #include "SymbolicImage.cpp"
 #include "OrientedGraph.cpp"
-#define TESTFUNC julia_func
+//#define TESTFUNC JuliaFunction
 #define NUM_CELLS_P 1
 #define NPOINTS_P 2
 #define TESTFUNC_P 3
-#include "mathFunction.cpp"
+#include "mathFunction.hpp"
 
-coords_t TESTFUNC(const coords_t& coords);
+//coords_t TESTFUNC(const coords_t& coords);
 /*
 int main(int argc, char const *argv[])
 {
@@ -61,7 +61,9 @@ int main(int argc, char const *argv[])
 	//cout<<"def num_points"<<endl;
 	size_t num_points = argc > NPOINTS_P ? stoi(argv[NPOINTS_P]) : NPOINTS;
 	//cout<<num_points<<endl;
-	dfunction_t displayFunc = TESTFUNC;
+	DuffingFunctions F = DuffingFunction();
+	
+	DisplayFunction* displayFunc = (DisplayFunction *) &F;
 	//displayFunc(make_pair(1,1));
 	//cout<<displayFunc<<endl;
 	//cout<<"create SymbolicImage"<<endl;

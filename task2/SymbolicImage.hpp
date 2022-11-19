@@ -2,14 +2,11 @@
 #define SymbolicImage_hpp
 
 #include <iostream>
-
-#include <cmath>
-#include <string>
-#include <set>
-#include <map>
-
 #include <iterator>
 #include <utility>
+
+#include "custom_types.hpp"
+#include "mathFunction.hpp"
 
 using namespace std;
 
@@ -18,20 +15,13 @@ using namespace std;
 #define C -2.0
 #define D  2.0
 #define NUMCELLS 50
-#define DISPLAYFUNC loc_julia_func
+#define DISPLAYFUNC JuliaFunction
 #define RRAND 1000
 #define NPOINTS 100
 
 #define SEP_AXIS ';'
 #define SEP_VAL ','
 #define SEP_EQ ':'
-
-
-using graph_t = map<size_t, set<size_t> >;
-using named_map_t = map<string, double>;
-using options_t = map<string, named_map_t>;
-using coords_t  = pair<double, double>;
-using dfunction_t = coords_t (*)(const coords_t&);
 
 /* тестовая функция */
 /*
@@ -54,7 +44,7 @@ pair<double, double> DISPLAYFUNC (const coords_t& coords ) {
 */
 //потом убрать !!!!
 
-coords_t DISPLAYFUNC(const coords_t& coords) {
+/*coords_t DISPLAYFUNC(const coords_t& coords) {
 	double a = 0.15;
 	double b = 0.45;
 	double x = coords.first;
@@ -63,6 +53,7 @@ coords_t DISPLAYFUNC(const coords_t& coords) {
     double y1 = 2 * x * y + b;
 	return make_pair(x1, y1);
 }
+*/
 
 
 /*схема работы CalcSymbolicImage -> displayСell -> displayPoint*/
@@ -71,7 +62,8 @@ class SymbolicImage{
 	named_map_t cell_size; // размер ячейки  
 	options_t boundaries; // набор краевый условий области
 	size_t num_points; // количество точек в ячейке
-	dfunction_t displayFunc = nullptr; // фукнция для отображения
+	//dfunction_t displayFunc = nullptr; // фукнция для отображения
+	DisplayFunction* displayFunc = nullptr; // класс фукнция для отображения
 	//граф образов
 	graph_t image_graph;
 	//длины отрезков области 
@@ -111,8 +103,9 @@ public:
 		calcSegmentLength();
 		calcCellSize();
 		calcNumCells();
-
-		displayFunc = DISPLAYFUNC;
+		// по умолчанию
+		JuliaFunction F = JuliaFunction();
+		displayFunc = (DisplayFunction *) &F;
 		range_rand = RRAND;
 	}
 	named_map_t getCellSize(){
@@ -157,7 +150,7 @@ public:
 		 options_t boundaries,
 		 named_map_t num_cells,
 		 size_t num_points,
-		 dfunction_t displayFunc,
+		 DisplayFunction* displayFunc,
 		 double range_rand
 	){
 		this->axes = axes;

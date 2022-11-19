@@ -48,7 +48,7 @@ size_t SymbolicImage::displayPoint(const double l_board,
 ){
 	double x = l_board + randStep("x");
     double y = t_board - randStep("y");
-    coords_t tgt_coords = displayFunc(make_pair(x,y));			
+    coords_t tgt_coords = displayFunc->getXY(make_pair(x,y));			
 	double tgt_x = tgt_coords.first;
 	double tgt_y = tgt_coords.second;
 	//int row1 = l_y - roundUp((y1 + len_y/2) / h);

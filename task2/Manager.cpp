@@ -21,10 +21,14 @@ public:
 		//тут нужен иф на проверку /
 		path.push_back('/');
 		this->path = path;
-		fout.open(path+file_name); // связываем объект с файлом
 
 	}
+	void open(){
+		// добавить обработку на открытие потока
+		fout.open(path+file_name); // связываем объект с файлом
+	}
 	void writeData(){
+		open();
 		fout<<PARAM_LABEL<<"boundaries"<<endl;
 		fout<<symim_p->getStrBoundaries()<<endl;
 		fout<<endl;
@@ -40,6 +44,7 @@ public:
 				fout<<coords.first<<" "<<coords.second<<endl;
 			}
 		}
+		close();
 	}
 	void close(){
 		fout.close();
