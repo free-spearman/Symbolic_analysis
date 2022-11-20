@@ -47,20 +47,23 @@ int main(int argc, char const *argv[])
 			});
 	}
 	named_map_t num_cells;
+	named_map_t cell_size;
 	//cout<<argc<<endl;
 	//cout<<argc<<endl;
 	size_t in_num_cells = argc > 1? stoi(argv[NUM_CELLS_P]):NUMCELLS;
 	//cout<<"in_num_cells:"<<in_num_cells<<endl;
 	for (string axis : axes){
-			num_cells.insert({axis,
-				in_num_cells
+			cell_size.insert({axis,
+				0.01
 			});
 	}
+	//cell_size["x"] = cell_size["x"]/in_num_cells;
+	//cout<< cell_size["x"];
 
 	double range_rand = RRAND;
 	//cout<<"def num_points"<<endl;
 	size_t num_points = argc > NPOINTS_P ? stoi(argv[NPOINTS_P]) : NPOINTS;
-	//cout<<num_points<<endl;
+	cout<<num_points<<endl;
 	DuffingFunction F = DuffingFunction();
 	
 	DisplayFunction* displayFunc = (DisplayFunction *) &F;
@@ -69,10 +72,12 @@ int main(int argc, char const *argv[])
 	//cout<<"create SymbolicImage"<<endl;
 	SymbolicImage test = SymbolicImage(axes,
 		boundaries,
-		num_cells,
+		//num_cells,
+		cell_size,
 		num_points,
 		displayFunc,
-		range_rand
+		range_rand,
+		true
 		);
 	//cout<<"Создал test"<<endl;
 	//graph_t graph = test.CalcSymbolicImage();

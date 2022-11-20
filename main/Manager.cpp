@@ -3,7 +3,7 @@
 #include <fstream>
 
 #define PARAM_LABEL '#' 
-
+#define SEP_CMD '='
 #define SEP_SPACE " " 
 using namespace std;
 class Manager
@@ -52,4 +52,23 @@ public:
 	string getFile(){
 		return path+file_name; 
 	}
+
+	/*pair< named_map_t, vector<string>> 
+		сlParse ( int argc, char const *argv[]){
+		size_t nparam = 1;
+		named_map_t param;
+		vector<string> names; 
+		while(nparam < argc){
+			string name = string(argv[nparam]);
+			if (argv[nparam + 1] == SEP_CMD){
+				names.push_back(name);
+				param.insert({name, argv[nparam + 2]});
+				nparam += 3;  
+			}
+			else
+				nparam += 1;
+		}
+		return make_pair(param, names);
+	}
+	*/
 };

@@ -19,7 +19,7 @@ using namespace std;
 #define NUMCELLS 50
 #define DISPLAYFUNC JuliaFunction
 #define RRAND 1000
-#define NPOINTS 100
+#define NPOINTS 800
 
 #define SEP_AXIS ';'
 #define SEP_VAL ','
@@ -104,6 +104,8 @@ public:
 				NUMCELLS
 			});
 		}
+		//временно 
+		//num_cells["y"] =
 		num_points = NPOINTS;
 		calcSegmentLength();
 		calcCellSize();
@@ -166,6 +168,24 @@ public:
 		this->range_rand = range_rand; 	
 		calcSegmentLength();
 		calcCellSize();
+		calcNumCells();
+		}
+
+		SymbolicImage( set<string> axes,
+		 options_t boundaries,
+		 named_map_t cell_size,
+		 size_t num_points,
+		 DisplayFunction* displayFunc,
+		 double range_rand,
+		 bool cell_size_flag
+	){
+		this->axes = axes;
+		this->boundaries = boundaries;
+		this->cell_size = cell_size;
+		this->num_points = num_points;	
+		this->displayFunc = displayFunc;
+		this->range_rand = range_rand; 	
+		calcSegmentLength();
 		calcNumCells();
 		}
 	virtual coords_t CellToPoint(size_t cell);
