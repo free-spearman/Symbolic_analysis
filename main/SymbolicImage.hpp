@@ -19,7 +19,7 @@ using namespace std;
 #define NUMCELLS 50
 #define DISPLAYFUNC JuliaFunction
 #define RRAND 1000
-#define NPOINTS 800
+#define NPOINTS 100
 
 #define SEP_AXIS ';'
 #define SEP_VAL ','

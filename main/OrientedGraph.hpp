@@ -23,7 +23,7 @@ class OrientedGraph{
 	csc_t filtered_csc;
 	// комоненты сильной связности/Components of strong communication
 	csc_t csc;
-	// список посещений 
+	// список посещений, после выполнения глубина обхода от вершины
 	vector<size_t> disc;
 	// нижния вершина, которую можно посетить
 	vector<size_t> lowLink;
@@ -53,6 +53,9 @@ public:
 	void printStrongConComponents();
 	csc_t filterComponents();
 	size_t findMaxRangComponent();
+	void printDisc();
+	vector<size_t> getDisc();
+	void printToplgSortedGraph();
 };
 
 #endif /* OrientedGraph_hpp */

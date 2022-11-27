@@ -9,8 +9,9 @@ void OrientedGraph::findComponent(size_t vertex) {
     //using graph_t = map<size_t, set<size_t> >;
     // проверка на наличие хоть каких-то смежных вершин
     for ( size_t neighbor :adjList[vertex]){
+        //8
         if(disc[neighbor] == NOVISITED){
-            findComponent(neighbor);
+            findComponent(neighbor); // -> 8 -> 6 ->5
             lowLink[vertex] = min(lowLink[vertex], lowLink[neighbor]);
         }
         else if (stkItem[neighbor])
@@ -69,7 +70,7 @@ size_t OrientedGraph::findMaxRangComponent(){
         max_rang = max(max_rang,temp); 
     }
     return max_rang;
-} 
+}; 
 csc_t OrientedGraph::filterComponents(){
     //using csc_t = vector<vector<size_t>>;
     if (!filtered_csc.empty())
@@ -80,4 +81,32 @@ csc_t OrientedGraph::filterComponents(){
             filtered_csc.push_back(component);         
     }
     return filtered_csc;
+};
+vector<size_t> OrientedGraph::getDisc(){
+    return disc;
+};
+void OrientedGraph::printDisc(){
+    cout<<"printDisc"<<endl;
+    for (size_t i = 1; i < disc.size(); i++){
+        cout<<disc[i]<<endl;
+    }
+};
+void OrientedGraph::printToplgSortedGraph(){
+    cout<<"Топологическая сортировка графа компонент:"<<endl;
+    //adjList
+    size_t i = 1;
+    // отображение номеров из исходного в сорт
+    vector<size_t> src_in_sorted;
+
+    src_in_sorted.assign(numVertices+1, 0);
+    reverse(csc.begin(), csc.end());
+
+    for (vector<size_t> comp :csc){
+        for(size_t t :comp){
+            src_in_sorted[t] = i;
+            i++; 
+        }
+    }
+    for (i = 1; i < numVertices+1; i++)
+        cout<<i<<"->"<<src_in_sorted[i]<<endl;
 };
